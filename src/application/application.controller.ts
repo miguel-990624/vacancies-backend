@@ -1,10 +1,14 @@
 import { Controller, Post, Get, Param, Delete, Body, Req, UseGuards } from '@nestjs/common';
 import { ApplicationService } from './application.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { Roles } from '../common/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ApiTags, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 
+@ApiTags('Applications')
+@ApiBearerAuth() // JWT
+@ApiSecurity('api-key') // x-api-key
 @Controller('applications')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ApplicationController {
@@ -25,13 +29,13 @@ export class ApplicationController {
     return this.applicationService.findAll();
   }
 
-  // 👉 Consultar una postulación específica
+  // 👉 Consultar una postulación específica (cualquier usuario autenticado)
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.applicationService.findOne(id);
   }
 
-  // 👉 Eliminar una postulación
+  // 👉 Eliminar una postulación (admin o coder)
   @Delete(':id')
   @Roles('admin', 'coder')
   async delete(@Param('id') id: number, @Req() req) {
