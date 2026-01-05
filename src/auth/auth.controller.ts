@@ -3,12 +3,12 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import type { Request, Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
-import { loginDto } from './dto/login.dto';
+import { LoginDto } from './dto/login.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { ApiKeyGuard } from './guards/api-key.guard';
 
 @ApiTags('Auth')
-@ApiSecurity('api-key') // 👈 Swagger reconocerá el esquema api-key
+@ApiSecurity('api-key') 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -28,7 +28,7 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiResponse({ status: 200, description: 'JWT access token and refresh token returned' })
-  async login(@Body() dto: loginDto, @Res({ passthrough: true }) res: Response) {
+  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const { accessToken, refreshToken } = await this.authService.login(dto.email, dto.password);
     const isProduction = process.env.NODE_ENV === 'production';
 

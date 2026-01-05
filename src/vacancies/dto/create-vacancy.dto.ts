@@ -3,43 +3,43 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Modality } from '../entities/vacancy.entity';
 
 export class CreateVacancyDto {
-  @ApiProperty({ example: 'Backend Developer' })
+  @ApiProperty({ example: 'Backend Developer', description: 'Título de la vacante' })
   @IsString()
   title: string;
 
-  @ApiProperty({ example: 'Responsible for building scalable APIs and maintaining database integrity.' })
+  @ApiProperty({ example: 'Desarrollo de APIs escalables con NestJS', description: 'Descripción de la vacante' })
   @IsString()
   description: string;
 
-  @ApiProperty({ example: 'Node.js, NestJS, TypeScript, PostgreSQL' })
+  @ApiProperty({ example: 'Node.js, NestJS, TypeScript, PostgreSQL', description: 'Tecnologías requeridas' })
   @IsString()
   technologies: string;
 
-  @ApiProperty({ example: 'Senior' })
+  @ApiProperty({ example: 'Mid', description: 'Nivel de seniority requerido' })
   @IsString()
   seniority: string;
 
-  @ApiProperty({ example: 'Communication, Problem-solving, Teamwork' })
+  @ApiProperty({ example: 'Trabajo en equipo, comunicación', description: 'Habilidades blandas requeridas' })
   @IsString()
   softSkills: string;
 
-  @ApiProperty({ example: 'Remote' })
+  @ApiProperty({ example: 'Medellín', description: 'Ubicación de la vacante' })
   @IsString()
   location: string;
 
-  @ApiProperty({ enum: Modality, example: 'remote' })
+  @ApiProperty({ enum: Modality, example: 'remote', description: 'Modalidad de trabajo' })
   @IsEnum(Modality)
   modality: Modality;
 
-  @ApiProperty({ example: '4000-6000 USD' })
+  @ApiProperty({ example: '4M - 6M COP', description: 'Rango salarial' })
   @IsString()
   salaryRange: string;
 
-  @ApiProperty({ example: 'TechCorp' })
+  @ApiProperty({ example: 'TechCorp', description: 'Empresa que ofrece la vacante' })
   @IsString()
   company: string;
 
-  @ApiProperty({ example: 10, minimum: 1 })
+  @ApiProperty({ example: 5, minimum: 1, description: 'Número máximo de postulantes permitidos' })
   @IsInt()
   @Min(1)
   maxApplicants: number;
