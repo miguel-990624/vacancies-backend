@@ -1,18 +1,39 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+  import { NestFactory, Reflector } from '@nestjs/core';
+  import { AppModule } from './app.module';
+  import { ValidationPipe } from '@nestjs/common';
+  import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+  import { RolesGuard } from './auth/guards/roles.guard';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  async function bootstrap() {
+    const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe({ 
-    whitelist: true, 
-    transform: true 
-  }));
+    const config = new DocumentBuilder()
+    .setTitle('Vacancies API') 
+    .setDescription('API para gestión de usuarios, vacantes y aplicaciones') 
+    .setVersion('1.0') 
+    .addBearerAuth()
+    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'api-key')
+    .build();
 
-  const port = process.env.PORT ?? 3000;
-  await app.listen(port);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
 
-  console.log(`🚀 Aplicación conectada correctamente en el puerto ${port}`);
-}
-bootstrap();
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true,
+      transform: true
+    }));
+
+    const reflector = app.get(Reflector);
+    app.useGlobalGuards(
+      new JwtAuthGuard(reflector),
+      new RolesGuard(reflector)
+    );
+
+    const port = process.env.PORT ?? 3000;
+    await app.listen(port);
+
+    console.log(`🚀 Aplicación conectada correctamente en el puerto ${port}`);
+    console.log(`📖 Swagger disponible en http://localhost:${port}/api`);
+  }
+  bootstrap();
