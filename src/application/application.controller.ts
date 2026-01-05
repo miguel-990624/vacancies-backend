@@ -12,7 +12,7 @@ import { ApiTags, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 @Controller('applications')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(private readonly applicationService: ApplicationService) { }
 
   // 👉 Coder se postula a una vacante
   @Post()
@@ -22,9 +22,16 @@ export class ApplicationController {
     return this.applicationService.create(userId, createApplicationDto.vacancyId);
   }
 
-  // 👉 Gestor/Admin pueden ver todas las postulaciones
+  @Get('my')
+  @Roles('coder')
+  async findAllMy(@Req() req) {
+    const userId = req.user.userId;
+    return this.applicationService.findAllByUser(userId);
+  }
+
+  // 👉 Gestor/Admin pueden ver todas las postulaciones -> Ahora SOLO Admin
   @Get()
-  @Roles('gestor', 'admin')
+  @Roles('admin')
   async findAll() {
     return this.applicationService.findAll();
   }
