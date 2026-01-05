@@ -4,6 +4,7 @@
   import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
   import { RolesGuard } from './auth/guards/roles.guard';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
   async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -29,6 +30,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
       new JwtAuthGuard(reflector),
       new RolesGuard(reflector)
     );
+
+    app.useGlobalInterceptors(new ResponseInterceptor());
 
     const port = process.env.PORT ?? 3000;
     await app.listen(port);
